@@ -3,6 +3,7 @@ export interface Service {
   title: string
   slug: string
   metadata: {
+    service_name: string
     icon: string
     description: string
     order: number
@@ -14,7 +15,9 @@ export interface ProcessStep {
   title: string
   slug: string
   metadata: {
+    step_name: string
     step_number: number
+    icon: string
     description: string
     order: number
   }
@@ -25,8 +28,15 @@ export interface TeamMember {
   title: string
   slug: string
   metadata: {
+    name: string
+    job_title: string
     position: string
     bio: string
+    location?: string
+    photo?: {
+      url: string
+      imgix_url: string
+    }
     image: {
       url: string
       imgix_url: string
@@ -61,9 +71,13 @@ export interface NewsArticle {
   title: string
   slug: string
   metadata: {
+    title: string
     excerpt: string
     published_date: string
     author: string
+    category?: {
+      value: string
+    }
     featured_image: {
       url: string
       imgix_url: string

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps) {
   return await generatePageMetadata({
     path: `/news/${slug}`,
     overrides: {
-      title: article.metadata.title,
+      title: article.metadata.title || article.title,
       description: article.metadata.content.replace(/<[^>]*>/g, '').substring(0, 160),
       ogImage: article.metadata.featured_image?.imgix_url
     }
@@ -40,20 +40,22 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
-              {article.metadata.category.value}
-            </span>
+            {article.metadata.category && (
+              <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+                {article.metadata.category.value}
+              </span>
+            )}
             <span className="text-gray-500">
               {new Date(article.metadata.published_date).toLocaleDateString()}
             </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {article.metadata.title}
+            {article.metadata.title || article.title}
           </h1>
           {article.metadata.featured_image && (
             <img
               src={`${article.metadata.featured_image.imgix_url}?w=1200&h=600&fit=crop&auto=format,compress`}
-              alt={article.metadata.title}
+              alt={article.metadata.title || article.title}
               className="w-full h-64 object-cover rounded-lg"
             />
           )}

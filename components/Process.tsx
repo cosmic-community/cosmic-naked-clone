@@ -25,7 +25,7 @@ export default async function Process() {
                 {step.metadata.icon || '🎯'}
               </div>
               <h3 className="text-xl font-bold text-secondary">
-                {step.metadata.step_name}
+                {step.metadata.step_name || step.title}
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 {step.metadata.description}

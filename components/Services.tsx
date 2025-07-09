@@ -24,7 +24,7 @@ export default async function Services() {
                 {service.metadata.icon || '🛠️'}
               </div>
               <h3 className="text-xl font-bold text-secondary">
-                {service.metadata.service_name}
+                {service.metadata.service_name || service.title}
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 {service.metadata.description}

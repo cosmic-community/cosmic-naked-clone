@@ -28,7 +28,7 @@ export default async function News() {
               {article.metadata.featured_image && (
                 <img
                   src={`${article.metadata.featured_image.imgix_url}?w=600&h=300&fit=crop&auto=format,compress`}
-                  alt={article.metadata.title}
+                  alt={article.metadata.title || article.title}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
               )}
@@ -41,7 +41,7 @@ export default async function News() {
                 )}
                 
                 <h3 className="text-xl font-bold text-secondary group-hover:text-primary transition-colors">
-                  {article.metadata.title}
+                  {article.metadata.title || article.title}
                 </h3>
                 
                 <div 
