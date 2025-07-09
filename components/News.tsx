@@ -1,4 +1,5 @@
 import { getNewsArticles } from '@/lib/cosmic'
+import Link from 'next/link'
 
 export default async function News() {
   const articles = await getNewsArticles()
@@ -18,7 +19,11 @@ export default async function News() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {articles.slice(0, 4).map((article, index) => (
-            <article key={article.id} className="card">
+            <Link 
+              key={article.id} 
+              href={`/news/${article.slug}`}
+              className="card block hover:shadow-xl transition-shadow duration-300"
+            >
               {article.metadata.featured_image && (
                 <img
                   src={`${article.metadata.featured_image.imgix_url}?w=600&h=300&fit=crop&auto=format,compress`}
@@ -34,12 +39,12 @@ export default async function News() {
                   </span>
                 )}
                 
-                <h3 className="text-xl font-bold text-secondary">
+                <h3 className="text-xl font-bold text-secondary group-hover:text-primary transition-colors">
                   {article.metadata.title}
                 </h3>
                 
                 <div 
-                  className="text-gray-600 text-sm leading-relaxed"
+                  className="text-gray-600 text-sm leading-relaxed line-clamp-3"
                   dangerouslySetInnerHTML={{ __html: article.metadata.content }}
                 />
                 
@@ -51,9 +56,10 @@ export default async function News() {
                       day: 'numeric'
                     })}
                   </span>
+                  <span className="text-primary font-medium">Read more →</span>
                 </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

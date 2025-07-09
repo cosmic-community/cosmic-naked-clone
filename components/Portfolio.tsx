@@ -1,4 +1,5 @@
 import { getFeaturedProjects } from '@/lib/cosmic'
+import Link from 'next/link'
 
 export default async function Portfolio() {
   const projects = await getFeaturedProjects()
@@ -18,7 +19,11 @@ export default async function Portfolio() {
 
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
-            <div key={project.id} className="group relative overflow-hidden rounded-lg shadow-lg">
+            <Link 
+              key={project.id} 
+              href={`/work/${project.slug}`}
+              className="group relative overflow-hidden rounded-lg shadow-lg block hover:shadow-xl transition-shadow duration-300"
+            >
               {project.metadata.project_image && (
                 <img
                   src={`${project.metadata.project_image.imgix_url}?w=800&h=600&fit=crop&auto=format,compress`}
@@ -48,7 +53,7 @@ export default async function Portfolio() {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
