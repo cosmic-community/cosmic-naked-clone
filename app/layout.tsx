@@ -1,28 +1,27 @@
-import './globals.css'
+import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { generatePageMetadata } from '@/components/SEO'
-import { generateSEOData } from '@/lib/seo'
-import SEO from '@/components/SEO'
+import './globals.css'
+import { SEO } from '@/components/SEO'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export async function generateMetadata() {
-  return await generatePageMetadata({ path: '/' })
+export const metadata: Metadata = {
+  title: 'Cosmic Naked Clone',
+  description: 'A modern web agency showcase built with Next.js and Cosmic CMS',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const seoData = await generateSEOData('/')
-  
   return (
     <html lang="en">
-      <head>
-        <SEO seoData={seoData} currentPath="/" />
-      </head>
       <body className={inter.className}>
+        <SEO />
         {children}
       </body>
     </html>
