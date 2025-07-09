@@ -3,9 +3,6 @@ const nextConfig = {
   images: {
     domains: ['cdn.cosmicjs.com', 'imgix.cosmicjs.com'],
   },
-  experimental: {
-    optimizeCss: true,
-  },
   typescript: {
     ignoreBuildErrors: false,
   },
