@@ -1,40 +1,29 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import SEO from '@/components/SEO'
+import { Inter } from 'next/font/google'
 import { generatePageMetadata } from '@/components/SEO'
+import { generateSEOData } from '@/lib/seo'
+import SEO from '@/components/SEO'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata() {
   return await generatePageMetadata({ path: '/' })
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const seoData = await generateSEOData('/')
+  
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
-        <SEO 
-          seoData={{
-            title: '',
-            description: '',
-            siteUrl: 'https://nakeddev.com'
-          }}
-          currentPath="/"
-        />
+        <SEO seoData={seoData} currentPath="/" />
       </head>
       <body className={inter.className}>
-        <Header />
-        <main className="pt-16">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   )

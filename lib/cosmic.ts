@@ -121,3 +121,31 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
     return null
   }
 }
+
+export async function getSEOSettings() {
+  try {
+    const { object } = await cosmic.objects
+      .findOne({ type: 'globals', slug: 'seo-settings' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    
+    return object || null
+  } catch (error) {
+    console.error('Error fetching SEO settings:', error)
+    return null
+  }
+}
+
+export async function getPageSEO(path: string) {
+  try {
+    const { object } = await cosmic.objects
+      .findOne({ type: 'page-seo', 'metadata.page_path': path })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    
+    return object || null
+  } catch (error) {
+    console.error('Error fetching page SEO:', error)
+    return null
+  }
+}

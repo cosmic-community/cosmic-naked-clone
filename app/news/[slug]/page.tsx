@@ -2,110 +2,66 @@
 import { getNewsArticleBySlug } from '@/lib/cosmic'
 import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
-import { Metadata } from 'next'
 
-interface NewsPageProps {
+interface NewsArticlePageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: NewsArticlePageProps) {
   const { slug } = await params
+  const article = await getNewsArticleBySlug(slug)
   
-  try {
-    const article = await getNewsArticleBySlug(slug)
-    
-    if (!article) {
-      return await generatePageMetadata({ path: '/news' })
-    }
-
-    return await generatePageMetadata({
-      path: `/news/${slug}`,
-      overrides: {
-        title: `${article.metadata.title} | Naked Development`,
-        description: article.metadata.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
-        keywords: `${article.metadata.category.value}, news, insights, ${article.metadata.title}`,
-        ogImage: article.metadata.featured_image?.imgix_url 
-          ? `${article.metadata.featured_image.imgix_url}?w=1200&h=630&fit=crop&auto=format,compress`
-          : undefined,
-      }
-    })
-  } catch (error) {
-    console.error('Error generating metadata for news article:', error)
-    return await generatePageMetadata({ path: '/news' })
+  if (!article) {
+    return {}
   }
+
+  return await generatePageMetadata({
+    path: `/news/${slug}`,
+    overrides: {
+      title: article.metadata.title,
+      description: article.metadata.content.replace(/<[^>]*>/g, '').substring(0, 160),
+      ogImage: article.metadata.featured_image?.imgix_url
+    }
+  })
 }
 
-export default async function NewsPage({ params }: NewsPageProps) {
+export default async function NewsArticlePage({ params }: NewsArticlePageProps) {
   const { slug } = await params
-  
-  try {
-    const article = await getNewsArticleBySlug(slug)
-    
-    if (!article) {
-      notFound()
-    }
+  const article = await getNewsArticleBySlug(slug)
 
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container py-16">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <div className="mb-4">
-                {article.metadata.category && (
-                  <span className="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">
-                    {article.metadata.category.value}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-4xl font-bold text-secondary mb-6">
-                {article.metadata.title}
-              </h1>
-              <p className="text-gray-600">
-                {new Date(article.metadata.published_date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-            </div>
-
-            {/* Featured Image */}
-            {article.metadata.featured_image && (
-              <div className="mb-12">
-                <img
-                  src={`${article.metadata.featured_image.imgix_url}?w=1200&h=600&fit=crop&auto=format,compress`}
-                  alt={article.metadata.title}
-                  className="w-full h-96 object-cover rounded-lg shadow-lg"
-                />
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="prose prose-lg max-w-none">
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <div 
-                  className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: article.metadata.content }}
-                />
-              </div>
-            </div>
-
-            {/* Back Button */}
-            <div className="mt-12 text-center">
-              <a
-                href="/#news"
-                className="inline-block bg-primary text-white px-8 py-3 rounded-full hover:bg-primary/90 transition-colors"
-              >
-                ← Back to News
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading article:', error)
+  if (!article) {
     notFound()
   }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+              {article.metadata.category.value}
+            </span>
+            <span className="text-gray-500">
+              {new Date(article.metadata.published_date).toLocaleDateString()}
+            </span>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {article.metadata.title}
+          </h1>
+          {article.metadata.featured_image && (
+            <img
+              src={`${article.metadata.featured_image.imgix_url}?w=1200&h=600&fit=crop&auto=format,compress`}
+              alt={article.metadata.title}
+              className="w-full h-64 object-cover rounded-lg"
+            />
+          )}
+        </div>
+        
+        <div 
+          className="prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: article.metadata.content }}
+        />
+      </div>
+    </div>
+  )
 }

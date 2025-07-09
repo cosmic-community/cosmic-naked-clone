@@ -2,106 +2,67 @@
 import { getProjectBySlug } from '@/lib/cosmic'
 import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
-import { Metadata } from 'next'
 
 interface WorkPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: WorkPageProps) {
   const { slug } = await params
+  const project = await getProjectBySlug(slug)
   
-  try {
-    const project = await getProjectBySlug(slug)
-    
-    if (!project) {
-      return await generatePageMetadata({ path: '/work' })
-    }
-
-    return await generatePageMetadata({
-      path: `/work/${slug}`,
-      overrides: {
-        title: `${project.metadata.project_name} - Portfolio | Naked Development`,
-        description: project.metadata.description,
-        keywords: `${project.metadata.project_name}, ${project.metadata.client}, ${project.metadata.industry}, portfolio, case study`,
-        ogImage: project.metadata.project_image?.imgix_url 
-          ? `${project.metadata.project_image.imgix_url}?w=1200&h=630&fit=crop&auto=format,compress`
-          : undefined,
-      }
-    })
-  } catch (error) {
-    console.error('Error generating metadata for project:', error)
-    return await generatePageMetadata({ path: '/work' })
+  if (!project) {
+    return {}
   }
+
+  return await generatePageMetadata({
+    path: `/work/${slug}`,
+    overrides: {
+      title: `${project.metadata.project_name} - Our Work - Naked Development`,
+      description: project.metadata.description,
+      ogImage: project.metadata.project_image?.imgix_url
+    }
+  })
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
   const { slug } = await params
-  
-  try {
-    const project = await getProjectBySlug(slug)
-    
-    if (!project) {
-      notFound()
-    }
+  const project = await getProjectBySlug(slug)
 
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container py-16">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-secondary mb-4">
-                {project.metadata.project_name}
-              </h1>
-              {project.metadata.client && (
-                <p className="text-xl text-gray-600 mb-6">
-                  {project.metadata.client}
-                </p>
-              )}
-              {project.metadata.industry && (
-                <span className="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">
-                  {project.metadata.industry}
-                </span>
-              )}
-            </div>
-
-            {/* Featured Image */}
-            {project.metadata.project_image && (
-              <div className="mb-12">
-                <img
-                  src={`${project.metadata.project_image.imgix_url}?w=1200&h=600&fit=crop&auto=format,compress`}
-                  alt={project.metadata.project_name}
-                  className="w-full h-96 object-cover rounded-lg shadow-lg"
-                />
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="prose prose-lg max-w-none">
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-bold text-secondary mb-6">About This Project</h2>
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {project.metadata.description}
-                </p>
-              </div>
-            </div>
-
-            {/* Back Button */}
-            <div className="mt-12 text-center">
-              <a
-                href="/#portfolio"
-                className="inline-block bg-primary text-white px-8 py-3 rounded-full hover:bg-primary/90 transition-colors"
-              >
-                ← Back to Portfolio
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading project:', error)
+  if (!project) {
     notFound()
   }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+              {project.metadata.industry || 'Project'}
+            </span>
+            {project.metadata.client && (
+              <span className="text-gray-500">
+                Client: {project.metadata.client}
+              </span>
+            )}
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {project.metadata.project_name}
+          </h1>
+          {project.metadata.project_image && (
+            <img
+              src={`${project.metadata.project_image.imgix_url}?w=1200&h=600&fit=crop&auto=format,compress`}
+              alt={project.metadata.project_name}
+              className="w-full h-64 object-cover rounded-lg"
+            />
+          )}
+        </div>
+        
+        <div className="prose prose-lg max-w-none">
+          <p>{project.metadata.description}</p>
+        </div>
+      </div>
+    </div>
+  )
 }

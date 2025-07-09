@@ -18,7 +18,7 @@ export default function SEO({ seoData, currentPath }: { seoData: SEOData; curren
     name: 'Naked Development',
     url: seoData.siteUrl,
     description: seoData.description,
-    ...(seoData.ogImage && { image: seoData.ogImage }),
+    ...(seoData.ogImage && { image: `${seoData.ogImage}?w=1200&h=630&fit=crop&auto=format,compress` }),
     sameAs: [
       ...(seoData.twitterHandle ? [`https://twitter.com/${seoData.twitterHandle.replace('@', '')}`] : []),
     ],
