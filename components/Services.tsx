@@ -1,4 +1,5 @@
 import { getServices } from '@/lib/cosmic'
+import { Service } from '@/types'
 
 export default async function Services() {
   const services = await getServices()
@@ -17,7 +18,7 @@ export default async function Services() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+          {services.map((service: Service, index: number) => (
             <div key={service.id} className="text-center space-y-4">
               <div className="text-6xl mb-4">
                 {service.metadata.icon || '🛠️'}

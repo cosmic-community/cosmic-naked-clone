@@ -1,4 +1,5 @@
 import { getTeamMembers } from '@/lib/cosmic'
+import { TeamMember } from '@/types'
 
 export default async function Team() {
   const teamMembers = await getTeamMembers()
@@ -18,7 +19,7 @@ export default async function Team() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {teamMembers.map((member, index) => (
+          {teamMembers.map((member: TeamMember, index: number) => (
             <div key={member.id} className="group">
               <div className="relative overflow-hidden rounded-lg shadow-lg mb-4">
                 {member.metadata.photo ? (

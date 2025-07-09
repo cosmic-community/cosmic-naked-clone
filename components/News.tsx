@@ -1,4 +1,5 @@
 import { getNewsArticles } from '@/lib/cosmic'
+import { NewsArticle } from '@/types'
 import Link from 'next/link'
 
 export default async function News() {
@@ -18,7 +19,7 @@ export default async function News() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {articles.slice(0, 4).map((article, index) => (
+          {articles.slice(0, 4).map((article: NewsArticle, index: number) => (
             <Link 
               key={article.id} 
               href={`/news/${article.slug}`}

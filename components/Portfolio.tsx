@@ -1,4 +1,5 @@
 import { getFeaturedProjects } from '@/lib/cosmic'
+import { PortfolioProject } from '@/types'
 import Link from 'next/link'
 
 export default async function Portfolio() {
@@ -18,7 +19,7 @@ export default async function Portfolio() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
+          {projects.map((project: PortfolioProject, index: number) => (
             <Link 
               key={project.id} 
               href={`/work/${project.slug}`}

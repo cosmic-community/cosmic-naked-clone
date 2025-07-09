@@ -1,4 +1,5 @@
 import { getProcessSteps } from '@/lib/cosmic'
+import { ProcessStep } from '@/types'
 
 export default async function Process() {
   const steps = await getProcessSteps()
@@ -18,7 +19,7 @@ export default async function Process() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
+          {steps.map((step: ProcessStep, index: number) => (
             <div key={step.id} className="text-center space-y-4">
               <div className="text-6xl mb-4">
                 {step.metadata.icon || '🎯'}
