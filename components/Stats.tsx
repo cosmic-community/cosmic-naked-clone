@@ -17,9 +17,11 @@ interface CountUpProps {
   end: number
   duration?: number
   inView: boolean
+  prefix?: string
+  suffix?: string
 }
 
-function CountUp({ end, duration = 2, inView }: CountUpProps) {
+function CountUp({ end, duration = 2, inView, prefix = '', suffix = '' }: CountUpProps) {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
@@ -54,7 +56,7 @@ function CountUp({ end, duration = 2, inView }: CountUpProps) {
     }
   }, [end, duration, inView])
 
-  return <span>{count.toLocaleString()}</span>
+  return <span>{prefix}{count.toLocaleString()}{suffix}</span>
 }
 
 export default function Stats({ companyInfo }: StatsProps) {
@@ -88,10 +90,45 @@ export default function Stats({ companyInfo }: StatsProps) {
     },
   ]
 
-  // Parse numeric values from strings (remove commas and convert to numbers)
-  const parseNumericValue = (value: string): number => {
-    const numericValue = value.replace(/[^0-9]/g, '')
-    return parseInt(numericValue) || 0
+  // Parse numeric values and extract prefixes/suffixes
+  const parseStatValue = (value: string): { number: number; prefix: string; suffix: string } => {
+    // Handle different formats like "1.37M", "$2.965M", "4,679", "12B", etc.
+    const match = value.match(/^([^0-9]*)([\d.,]+)([^0-9]*)$/)
+    
+    if (match) {
+      const [, prefix, numberPart, suffix] = match
+      
+      // Convert values like "1.37M" to actual numbers
+      let multiplier = 1
+      let cleanSuffix = suffix
+      
+      if (suffix.includes('M')) {
+        multiplier = 1000000
+        cleanSuffix = suffix.replace('M', '')
+      } else if (suffix.includes('B')) {
+        multiplier = 1000000000
+        cleanSuffix = suffix.replace('B', '')
+      } else if (suffix.includes('K')) {
+        multiplier = 1000
+        cleanSuffix = suffix.replace('K', '')
+      }
+      
+      const number = parseFloat(numberPart.replace(/,/g, '')) * multiplier
+      
+      return {
+        number: Math.round(number),
+        prefix: prefix || '',
+        suffix: cleanSuffix || ''
+      }
+    }
+    
+    // Fallback for simple numbers
+    const numericValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0
+    return {
+      number: numericValue,
+      prefix: '',
+      suffix: ''
+    }
   }
 
   return (
@@ -99,8 +136,7 @@ export default function Stats({ companyInfo }: StatsProps) {
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8" ref={ref}>
           {stats.map((stat, index) => {
-            const numericValue = parseNumericValue(stat.value)
-            const hasNonNumericChars = stat.value.replace(/[0-9,]/g, '')
+            const { number, prefix, suffix } = parseStatValue(stat.value)
             
             return (
               <motion.div
@@ -111,11 +147,13 @@ export default function Stats({ companyInfo }: StatsProps) {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
                 <div className="text-3xl md:text-4xl font-bold text-secondary mb-2">
-                  {numericValue > 0 ? (
-                    <>
-                      {hasNonNumericChars}
-                      <CountUp end={numericValue} inView={isInView} />
-                    </>
+                  {number > 0 ? (
+                    <CountUp 
+                      end={number} 
+                      inView={isInView} 
+                      prefix={prefix}
+                      suffix={suffix}
+                    />
                   ) : (
                     stat.value
                   )}
