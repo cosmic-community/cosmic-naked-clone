@@ -7,6 +7,9 @@ const cosmic = createBucketClient({
   apiEnvironment: "staging",
 })
 
+// Export the cosmic client for use in other modules
+export { cosmic }
+
 export async function getCompanyInfo() {
   try {
     const { objects } = await cosmic.objects
