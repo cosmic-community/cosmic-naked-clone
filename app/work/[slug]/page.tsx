@@ -1,9 +1,38 @@
 // app/work/[slug]/page.tsx
 import { getProjectBySlug } from '@/lib/cosmic'
+import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
+import { Metadata } from 'next'
 
 interface WorkPageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
+  const { slug } = await params
+  
+  try {
+    const project = await getProjectBySlug(slug)
+    
+    if (!project) {
+      return await generatePageMetadata({ path: '/work' })
+    }
+
+    return await generatePageMetadata({
+      path: `/work/${slug}`,
+      overrides: {
+        title: `${project.metadata.project_name} - Portfolio | Naked Development`,
+        description: project.metadata.description,
+        keywords: `${project.metadata.project_name}, ${project.metadata.client}, ${project.metadata.industry}, portfolio, case study`,
+        ogImage: project.metadata.project_image?.imgix_url 
+          ? `${project.metadata.project_image.imgix_url}?w=1200&h=630&fit=crop&auto=format,compress`
+          : undefined,
+      }
+    })
+  } catch (error) {
+    console.error('Error generating metadata for project:', error)
+    return await generatePageMetadata({ path: '/work' })
+  }
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {

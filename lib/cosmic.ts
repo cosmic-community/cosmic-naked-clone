@@ -77,14 +77,14 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
   }
 }
 
-export async function getProjectBySlug(slug: string) {
+export async function getProjectBySlug(slug: string): Promise<PortfolioProject | null> {
   try {
     const { object } = await cosmic.objects
       .findOne({ type: 'portfolio-projects', slug })
       .props(['id', 'title', 'slug', 'metadata'])
       .depth(1)
     
-    return object
+    return object as PortfolioProject
   } catch (error) {
     console.error('Error fetching project by slug:', error)
     return null
@@ -105,14 +105,14 @@ export async function getNewsArticles(): Promise<NewsArticle[]> {
   }
 }
 
-export async function getNewsArticleBySlug(slug: string) {
+export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
     const { object } = await cosmic.objects
       .findOne({ type: 'news-articles', slug })
       .props(['id', 'title', 'slug', 'metadata'])
       .depth(1)
     
-    return object
+    return object as NewsArticle
   } catch (error) {
     console.error('Error fetching news article by slug:', error)
     return null

@@ -1,9 +1,38 @@
 // app/news/[slug]/page.tsx
 import { getNewsArticleBySlug } from '@/lib/cosmic'
+import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
+import { Metadata } from 'next'
 
 interface NewsPageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
+  const { slug } = await params
+  
+  try {
+    const article = await getNewsArticleBySlug(slug)
+    
+    if (!article) {
+      return await generatePageMetadata({ path: '/news' })
+    }
+
+    return await generatePageMetadata({
+      path: `/news/${slug}`,
+      overrides: {
+        title: `${article.metadata.title} | Naked Development`,
+        description: article.metadata.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
+        keywords: `${article.metadata.category.value}, news, insights, ${article.metadata.title}`,
+        ogImage: article.metadata.featured_image?.imgix_url 
+          ? `${article.metadata.featured_image.imgix_url}?w=1200&h=630&fit=crop&auto=format,compress`
+          : undefined,
+      }
+    })
+  } catch (error) {
+    console.error('Error generating metadata for news article:', error)
+    return await generatePageMetadata({ path: '/news' })
+  }
 }
 
 export default async function NewsPage({ params }: NewsPageProps) {

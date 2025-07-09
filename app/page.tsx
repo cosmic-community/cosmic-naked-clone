@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import Stats from '@/components/Stats'
@@ -11,6 +12,11 @@ import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import ClientLogos from '@/components/ClientLogos'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import { generatePageMetadata } from '@/components/SEO'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return await generatePageMetadata({ path: '/' })
+}
 
 export default function HomePage() {
   return (
