@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { SEO } from '@/components/SEO'
+import SEO from '@/components/SEO'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +21,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SEO />
+        <SEO seoData={{
+          title: 'Cosmic Naked Clone',
+          description: 'A modern web agency showcase built with Next.js and Cosmic CMS',
+          siteUrl: 'https://your-domain.com',
+          ogImage: '',
+          twitterHandle: '',
+          googleAnalyticsId: ''
+        }} currentPath="/" />
         {children}
       </body>
     </html>
