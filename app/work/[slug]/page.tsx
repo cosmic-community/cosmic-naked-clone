@@ -3,6 +3,8 @@ import { getProjectBySlug } from '@/lib/cosmic'
 import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
 
+export const revalidate = 10
+
 interface WorkPageProps {
   params: Promise<{ slug: string }>
 }

@@ -3,6 +3,8 @@ import { getNewsArticleBySlug } from '@/lib/cosmic'
 import { generatePageMetadata } from '@/components/SEO'
 import { notFound } from 'next/navigation'
 
+export const revalidate = 10
+
 interface NewsArticlePageProps {
   params: Promise<{ slug: string }>
 }

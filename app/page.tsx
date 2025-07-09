@@ -9,6 +9,8 @@ import News from '@/components/News'
 import Contact from '@/components/Contact'
 import { getCompanyInfo } from '@/lib/cosmic'
 
+export const revalidate = 10
+
 export default async function Home() {
   const companyInfo = await getCompanyInfo()
 
