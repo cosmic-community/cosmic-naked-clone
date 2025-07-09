@@ -24,6 +24,20 @@ export async function getCompanyInfo() {
   }
 }
 
+export async function getMediaImages() {
+  try {
+    const response = await cosmic.media.find({
+      limit: 10,
+      props: ['name', 'url', 'imgix_url']
+    })
+    
+    return response.media || []
+  } catch (error) {
+    console.error('Error fetching media images:', error)
+    return []
+  }
+}
+
 export async function getServices(): Promise<Service[]> {
   try {
     const { objects } = await cosmic.objects

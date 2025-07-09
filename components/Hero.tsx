@@ -1,11 +1,24 @@
-import { getCompanyInfo } from '@/lib/cosmic'
+import { getCompanyInfo, getMediaImages } from '@/lib/cosmic'
+import { MediaImage } from '@/types'
 
 export default async function Hero() {
   const companyInfo = await getCompanyInfo()
+  const mediaImages = await getMediaImages()
 
   if (!companyInfo) {
     return null
   }
+
+  // Filter images to get good backgrounds for phone frames
+  const backgroundImages = mediaImages.filter((img: MediaImage) => 
+    img.name.includes('photo-') || img.name.includes('.jpg')
+  ).slice(0, 2)
+
+  // Fallback images if no media images are available
+  const leftPhoneImage = backgroundImages[0]?.imgix_url || 
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=800&fit=crop&auto=format,compress'
+  const rightPhoneImage = backgroundImages[1]?.imgix_url || 
+    'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=800&fit=crop&auto=format,compress'
 
   return (
     <section className="pt-32 pb-20 section-padding bg-white">
@@ -40,13 +53,21 @@ export default async function Hero() {
               {/* Left Phone - Dating App */}
               <div className="relative transform rotate-[-5deg] hover:rotate-0 transition-transform duration-300">
                 <div className="relative w-56 h-[480px] bg-black rounded-[40px] p-2 shadow-2xl">
-                  <div className="w-full h-full bg-gradient-to-br from-purple-600 to-pink-600 rounded-[32px] overflow-hidden relative">
-                    <div className="absolute inset-0 bg-black/20"></div>
-                    <div className="absolute top-8 left-6 text-white">
+                  <div className="w-full h-full rounded-[32px] overflow-hidden relative">
+                    {/* Dynamic background image */}
+                    <img
+                      src={`${leftPhoneImage}?w=400&h=800&fit=crop&auto=format,compress`}
+                      alt="App background"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/80 to-pink-600/80"></div>
+                    <div className="absolute inset-0 bg-black/30"></div>
+                    
+                    <div className="absolute top-8 left-6 text-white z-10">
                       <h3 className="text-2xl font-bold">BOOM!</h3>
                       <p className="text-sm opacity-90">Dating Made Simple</p>
                     </div>
-                    <div className="absolute bottom-20 left-6 right-6">
+                    <div className="absolute bottom-20 left-6 right-6 z-10">
                       <div className="flex space-x-3">
                         <div className="w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm"></div>
                         <div className="w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm"></div>
@@ -59,8 +80,16 @@ export default async function Hero() {
               {/* Right Phone - Analytics Dashboard */}
               <div className="relative transform rotate-[5deg] hover:rotate-0 transition-transform duration-300">
                 <div className="relative w-56 h-[480px] bg-black rounded-[40px] p-2 shadow-2xl">
-                  <div className="w-full h-full bg-gray-900 rounded-[32px] overflow-hidden relative">
-                    <div className="absolute top-8 left-6 right-6">
+                  <div className="w-full h-full rounded-[32px] overflow-hidden relative">
+                    {/* Dynamic background image */}
+                    <img
+                      src={`${rightPhoneImage}?w=400&h=800&fit=crop&auto=format,compress`}
+                      alt="App background"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gray-900/90"></div>
+                    
+                    <div className="absolute top-8 left-6 right-6 z-10">
                       <div className="flex items-center justify-between text-white">
                         <div className="flex items-center space-x-2">
                           <div className="w-8 h-8 bg-green-500 rounded-full"></div>
@@ -75,7 +104,7 @@ export default async function Hero() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute bottom-20 left-6 right-6">
+                    <div className="absolute bottom-20 left-6 right-6 z-10">
                       <div className="w-full h-32 bg-green-500/20 rounded-2xl backdrop-blur-sm border border-green-500/30 flex items-center justify-center">
                         <div className="w-20 h-20 bg-green-500 rounded-full opacity-80"></div>
                       </div>
