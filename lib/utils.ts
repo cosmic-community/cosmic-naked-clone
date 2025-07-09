@@ -114,11 +114,18 @@ export function getContrastColor(hexColor: string): string {
   
   // Use regex to extract RGB components and add proper null checks
   const match = cleanHex.match(/^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
-  if (!match) return '#000000'
+  if (!match || match.length < 4) return '#000000'
   
-  const r = parseInt(match[1], 16)
-  const g = parseInt(match[2], 16)
-  const b = parseInt(match[3], 16)
+  // Safely extract the matched groups with null checks
+  const redHex = match[1]
+  const greenHex = match[2]
+  const blueHex = match[3]
+  
+  if (!redHex || !greenHex || !blueHex) return '#000000'
+  
+  const r = parseInt(redHex, 16)
+  const g = parseInt(greenHex, 16)
+  const b = parseInt(blueHex, 16)
   
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   
@@ -127,11 +134,19 @@ export function getContrastColor(hexColor: string): string {
 
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null
+  if (!result || result.length < 4) return null
+  
+  const redHex = result[1]
+  const greenHex = result[2]
+  const blueHex = result[3]
+  
+  if (!redHex || !greenHex || !blueHex) return null
+  
+  return {
+    r: parseInt(redHex, 16),
+    g: parseInt(greenHex, 16),
+    b: parseInt(blueHex, 16)
+  }
 }
 
 export function rgbToHex(r: number, g: number, b: number): string {
