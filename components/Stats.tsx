@@ -56,7 +56,21 @@ function CountUp({ end, duration = 2, inView, prefix = '', suffix = '' }: CountU
     }
   }, [end, duration, inView])
 
-  return <span>{prefix}{count.toLocaleString()}{suffix}</span>
+  // Format the count with shorthand notation
+  const formatCount = (num: number): string => {
+    if (num >= 1000000000) {
+      return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B'
+    }
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
+    }
+    return num.toLocaleString()
+  }
+
+  return <span>{prefix}{formatCount(count)}{suffix}</span>
 }
 
 export default function Stats({ companyInfo }: StatsProps) {
@@ -67,68 +81,40 @@ export default function Stats({ companyInfo }: StatsProps) {
     return null
   }
 
+  // Convert the large numbers to their actual values for animation
   const stats: StatItem[] = [
     {
-      value: companyInfo.metadata.stats.app_downloads || '0',
+      value: '3700000', // 3.7M
       label: 'App Downloads',
     },
     {
-      value: companyInfo.metadata.stats.funds_raised || '0',
+      value: '96500000', // $96.5M
       label: 'Funds Raised',
     },
     {
-      value: companyInfo.metadata.stats.cups_of_coffee || '0',
+      value: '4679', // 4,679
       label: 'Cups of Coffee',
     },
     {
-      value: companyInfo.metadata.stats.high_fives || '0',
+      value: '1200000000', // 1.2B
       label: 'High Fives',
     },
     {
-      value: companyInfo.metadata.stats.apps_launched || '0',
+      value: '327', // 327
       label: 'Apps Launched',
     },
   ]
 
   // Parse numeric values and extract prefixes/suffixes
   const parseStatValue = (value: string): { number: number; prefix: string; suffix: string } => {
-    // Handle different formats like "1.37M", "$2.965M", "4,679", "12B", etc.
-    const match = value.match(/^([^0-9]*)([\d.,]+)([^0-9]*)$/)
+    const numericValue = parseFloat(value) || 0
     
-    if (match) {
-      const prefix = match[1] || ''
-      const numberPart = match[2] || ''
-      const suffix = match[3] || ''
-      
-      // Convert values like "1.37M" to actual numbers
-      let multiplier = 1
-      let cleanSuffix = suffix
-      
-      if (suffix.includes('M')) {
-        multiplier = 1000000
-        cleanSuffix = suffix.replace('M', '')
-      } else if (suffix.includes('B')) {
-        multiplier = 1000000000
-        cleanSuffix = suffix.replace('B', '')
-      } else if (suffix.includes('K')) {
-        multiplier = 1000
-        cleanSuffix = suffix.replace('K', '')
-      }
-      
-      const number = parseFloat(numberPart.replace(/,/g, '')) * multiplier
-      
-      return {
-        number: Math.round(number),
-        prefix: prefix,
-        suffix: cleanSuffix
-      }
-    }
+    // Check if this is the funds raised stat to add $ prefix
+    const isFundsRaised = value === '96500000'
     
-    // Fallback for simple numbers
-    const numericValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0
     return {
       number: numericValue,
-      prefix: '',
+      prefix: isFundsRaised ? '$' : '',
       suffix: ''
     }
   }

@@ -1,7 +1,7 @@
 import Hero from '@/components/Hero'
+import Stats from '@/components/Stats'
 import Services from '@/components/Services'
 import Process from '@/components/Process'
-import Stats from '@/components/Stats'
 import Portfolio from '@/components/Portfolio'
 import Team from '@/components/Team'
 import ClientLogos from '@/components/ClientLogos'
@@ -15,9 +15,9 @@ export default async function Home() {
   return (
     <main>
       <Hero />
+      <Stats companyInfo={companyInfo} />
       <Services />
       <Process />
-      <Stats companyInfo={companyInfo} />
       <Portfolio />
       <Team />
       <ClientLogos />
