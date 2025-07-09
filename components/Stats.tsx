@@ -96,7 +96,9 @@ export default function Stats({ companyInfo }: StatsProps) {
     const match = value.match(/^([^0-9]*)([\d.,]+)([^0-9]*)$/)
     
     if (match) {
-      const [, prefix, numberPart, suffix] = match
+      const prefix = match[1] || ''
+      const numberPart = match[2] || ''
+      const suffix = match[3] || ''
       
       // Convert values like "1.37M" to actual numbers
       let multiplier = 1
@@ -117,8 +119,8 @@ export default function Stats({ companyInfo }: StatsProps) {
       
       return {
         number: Math.round(number),
-        prefix: prefix || '',
-        suffix: cleanSuffix || ''
+        prefix: prefix,
+        suffix: cleanSuffix
       }
     }
     
