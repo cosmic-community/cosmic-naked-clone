@@ -112,9 +112,13 @@ export function getContrastColor(hexColor: string): string {
   const cleanHex = hexColor.replace('#', '')
   if (cleanHex.length !== 6) return '#000000'
   
-  const r = parseInt(cleanHex.slice(0, 2), 16)
-  const g = parseInt(cleanHex.slice(2, 4), 16)
-  const b = parseInt(cleanHex.slice(4, 6), 16)
+  // Use regex to extract RGB components and add proper null checks
+  const match = cleanHex.match(/^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
+  if (!match) return '#000000'
+  
+  const r = parseInt(match[1], 16)
+  const g = parseInt(match[2], 16)
+  const b = parseInt(match[3], 16)
   
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   
