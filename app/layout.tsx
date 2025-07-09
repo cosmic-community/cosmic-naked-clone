@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Cosmic Naked Clone',
   description: 'A modern web agency showcase built with Next.js and Cosmic CMS',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.png',
   },
 }
 
