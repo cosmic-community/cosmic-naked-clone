@@ -21,7 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      <Header />
       
       <Suspense fallback={<LoadingSpinner />}>
         <Hero />
@@ -54,7 +53,6 @@ export default function HomePage() {
       </Suspense>
       
       <Contact />
-      <Footer />
     </main>
   )
 }

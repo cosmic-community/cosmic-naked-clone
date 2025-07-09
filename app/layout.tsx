@@ -29,7 +29,9 @@ export default function RootLayout({
           twitterHandle: '',
           googleAnalyticsId: ''
         }} currentPath="/" />
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   )
