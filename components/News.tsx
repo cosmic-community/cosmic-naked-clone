@@ -29,11 +29,11 @@ export default async function News() {
                 <img
                   src={`${article.metadata.featured_image.imgix_url}?w=600&h=300&fit=crop&auto=format,compress`}
                   alt={article.metadata.title || article.title}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  className="w-full h-48 object-cover rounded-t-lg"
                 />
               )}
               
-              <div className="space-y-4">
+              <div className="p-6 space-y-4">
                 {article.metadata.category && (
                   <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-xs font-medium">
                     {article.metadata.category.value}
