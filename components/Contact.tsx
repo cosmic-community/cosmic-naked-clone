@@ -124,7 +124,7 @@ export default async function Contact() {
               
               <button
                 type="submit"
-                className="w-full btn-primary"
+                className="w-full bg-primary text-white py-3 px-6 rounded-md font-medium hover:bg-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 Send Message
               </button>

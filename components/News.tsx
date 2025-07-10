@@ -23,7 +23,7 @@ export default async function News() {
             <Link 
               key={article.id} 
               href={`/news/${article.slug}`}
-              className="card block"
+              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 block"
             >
               {article.metadata.featured_image && (
                 <img
