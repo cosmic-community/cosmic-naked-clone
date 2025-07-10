@@ -8,14 +8,14 @@ import ClientLogos from '@/components/ClientLogos'
 import News from '@/components/News'
 import Contact from '@/components/Contact'
 import { getCompanyInfo } from '@/lib/cosmic'
-import { generateSEOData, generateMetadata } from '@/lib/seo'
+import { generateSEOData, generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Metadata } from 'next'
 
 export const revalidate = 10
 
 export async function generateMetadata(): Promise<Metadata> {
   const seoData = await generateSEOData('/')
-  return generateMetadata(seoData, '/')
+  return generateSEOMetadata(seoData, '/')
 }
 
 export default async function Home() {
