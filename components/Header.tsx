@@ -7,12 +7,12 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navigation = [
-    { name: 'BADASS SKILLS', href: '#services' },
+    { name: 'BADASS SKILLS', href: '/#services' },
     { name: 'ABOUT US', href: '/about' },
-    { name: 'OUR WORK', href: '#portfolio' },
-    { name: 'MEDIA', href: '#news' },
-    { name: 'FOUNDER U', href: '#contact' },
-    { name: "LET'S TALK", href: '#contact' },
+    { name: 'OUR WORK', href: '/#portfolio' },
+    { name: 'MEDIA', href: '/#news' },
+    { name: 'FOUNDER U', href: '/#contact' },
+    { name: "LET'S TALK", href: '/#contact' },
   ]
 
   return (
