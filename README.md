@@ -1,4 +1,4 @@
-# YOOOO
+# TEST
 
 A modern, responsive clone of the Naked Development website built with Next.js 15 and Tailwind CSS, powered by Cosmic CMS. This application showcases an award-winning app development agency's services, portfolio, team, and company information with a clean, professional design.
 
@@ -120,3 +120,4 @@ const projects = await cosmic.objects
   })
   .props(['id', 'title', 'metadata'])
   .depth(1)
+```
