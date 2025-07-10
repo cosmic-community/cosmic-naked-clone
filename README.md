@@ -1,4 +1,4 @@
-# LFG Cosmic
+# YOOOO
 
 A modern, responsive clone of the Naked Development website built with Next.js 15 and Tailwind CSS, powered by Cosmic CMS. This application showcases an award-winning app development agency's services, portfolio, team, and company information with a clean, professional design.
 
@@ -120,37 +120,3 @@ const projects = await cosmic.objects
   })
   .props(['id', 'title', 'metadata'])
   .depth(1)
-```
-
-## Cosmic CMS Integration
-
-This application integrates with Cosmic CMS using the following object types:
-
-- **Company Info** - Business details and statistics
-- **Team Members** - Leadership team profiles
-- **Portfolio Projects** - Showcase of work
-- **Services** - Service offerings
-- **Process Steps** - Development methodology
-- **News & Articles** - Company updates and insights
-
-The Cosmic SDK is configured to work with the staging environment and provides full TypeScript support for all content types.
-
-## Deployment Options
-
-### Vercel (Recommended)
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically on push
-
-### Netlify
-1. Build command: `bun run build`
-2. Publish directory: `.next`
-3. Add environment variables in Netlify dashboard
-
-### Other Platforms
-This Next.js application can be deployed to any platform that supports Node.js applications.
-
-For production deployment, ensure all environment variables are properly configured in your hosting platform.
-
-<!-- README_END -->
