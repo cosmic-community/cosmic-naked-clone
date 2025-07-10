@@ -23,7 +23,7 @@ export default async function News() {
             <Link 
               key={article.id} 
               href={`/news/${article.slug}`}
-              className="card block hover:shadow-xl transition-shadow duration-300"
+              className="card block"
             >
               {article.metadata.featured_image && (
                 <img
@@ -40,7 +40,7 @@ export default async function News() {
                   </span>
                 )}
                 
-                <h3 className="text-xl font-bold text-secondary group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-secondary">
                   {article.metadata.title || article.title}
                 </h3>
                 
