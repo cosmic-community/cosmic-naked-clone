@@ -4,9 +4,9 @@ export default async function Footer() {
   const companyInfo = await getCompanyInfo()
 
   return (
-    <footer className="bg-secondary text-white py-12">
-      <div className="container">
-        <div className="grid md:grid-cols-4 gap-8">
+    <footer className="bg-secondary text-white py-8 md:py-12">
+      <div className="container px-4 md:px-6">
+        <div className="grid md:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -62,7 +62,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-600 mt-8 pt-8 text-center text-sm text-gray-400">
+        <div className="border-t border-gray-600 mt-6 md:mt-8 pt-6 md:pt-8 text-center text-sm text-gray-400">
           <p>
             © 2024 {companyInfo?.metadata.company_name || 'Naked Development'}. All rights reserved.
           </p>
