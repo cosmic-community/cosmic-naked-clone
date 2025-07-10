@@ -1,169 +1,93 @@
 import { Metadata } from 'next'
-import { cosmic } from './cosmic'
+import { getSEOSettings, getPageSEO } from './cosmic'
 
 export interface SEOData {
   title: string
   description: string
-  keywords?: string
+  siteUrl: string
   ogImage?: string
   twitterHandle?: string
-  siteUrl: string
-  googleAnalyticsId?: string
   facebookAppId?: string
+  googleAnalyticsId?: string
+  keywords?: string
   robotsMeta?: string
-  canonicalUrl?: string
 }
 
-export async function generateSEOData(path: string, overrides?: Partial<SEOData>): Promise<SEOData> {
-  try {
-    // First, try to get page-specific SEO data
-    let pageSpecificData: SEOData | null = null
-    
-    try {
-      const pageResponse = await cosmic.objects.findOne({
-        type: 'page-seo',
-        'metadata.page_path': path
-      }).props(['title', 'slug', 'metadata'])
-      
-      if (pageResponse.object) {
-        const pageSEO = pageResponse.object
-        pageSpecificData = {
-          title: pageSEO.metadata.seo_title,
-          description: pageSEO.metadata.seo_description,
-          keywords: pageSEO.metadata.keywords,
-          ogImage: pageSEO.metadata.og_image?.imgix_url,
-          canonicalUrl: pageSEO.metadata.canonical_url,
-          robotsMeta: pageSEO.metadata.robots_meta_override,
-          siteUrl: '', // Will be filled from global settings
-          twitterHandle: '', // Will be filled from global settings
-          googleAnalyticsId: '', // Will be filled from global settings
-          facebookAppId: '' // Will be filled from global settings
-        }
-      }
-    } catch (error) {
-      // Page-specific SEO not found, continue with global settings
-      console.log('Page-specific SEO not found for path:', path)
-    }
-
-    // Fetch global SEO settings from Cosmic CMS
-    const globalResponse = await cosmic.objects.findOne({
-      type: 'globals',
-      slug: 'seo-settings'
-    }).props(['title', 'slug', 'metadata'])
-
-    const globalSEO = globalResponse.object
-    
-    const defaultData: SEOData = {
-      title: globalSEO?.metadata?.site_title || 'Naked Development',
-      description: globalSEO?.metadata?.site_description || 'Expert web development services',
-      keywords: globalSEO?.metadata?.keywords || 'web development, design, consulting',
-      ogImage: globalSEO?.metadata?.og_image?.imgix_url || '',
-      twitterHandle: globalSEO?.metadata?.twitter_handle || '@nakeddevelopment',
-      siteUrl: globalSEO?.metadata?.site_url || 'https://nakeddevelopment.com',
-      googleAnalyticsId: globalSEO?.metadata?.google_analytics_id || '',
-      facebookAppId: globalSEO?.metadata?.facebook_app_id || '',
-      robotsMeta: globalSEO?.metadata?.robots_meta?.value || 'index,follow'
-    }
-
-    // Merge page-specific data with global defaults
-    const mergedData = pageSpecificData ? {
-      ...defaultData,
-      ...pageSpecificData,
-      // Ensure global-only fields are preserved
-      siteUrl: defaultData.siteUrl,
-      twitterHandle: defaultData.twitterHandle,
-      googleAnalyticsId: defaultData.googleAnalyticsId,
-      facebookAppId: defaultData.facebookAppId,
-      robotsMeta: pageSpecificData.robotsMeta || defaultData.robotsMeta
-    } : defaultData
-
-    return {
-      ...mergedData,
-      ...overrides
-    }
-  } catch (error) {
-    console.error('Error fetching SEO data:', error)
-    
-    // Fallback data if Cosmic fetch fails
-    const fallbackData: SEOData = {
-      title: 'Naked Development',
-      description: 'Expert web development services',
-      keywords: 'web development, design, consulting',
-      siteUrl: 'https://nakeddevelopment.com',
-      twitterHandle: '@nakeddevelopment',
-      robotsMeta: 'index,follow'
-    }
-
-    return {
-      ...fallbackData,
-      ...overrides
-    }
+export async function generateSEOData(path: string, overrides: Partial<SEOData> = {}): Promise<SEOData> {
+  const seoSettings = await getSEOSettings()
+  const pageSEO = await getPageSEO(path)
+  
+  // Base SEO data from globals
+  const baseData: SEOData = {
+    title: seoSettings?.metadata?.site_title || 'Cosmic Naked Clone',
+    description: seoSettings?.metadata?.site_description || 'A modern web agency showcase built with Next.js and Cosmic CMS',
+    siteUrl: seoSettings?.metadata?.site_url || 'https://your-domain.com',
+    ogImage: seoSettings?.metadata?.og_image?.imgix_url || '',
+    twitterHandle: seoSettings?.metadata?.twitter_handle || '',
+    facebookAppId: seoSettings?.metadata?.facebook_app_id || '',
+    googleAnalyticsId: seoSettings?.metadata?.google_analytics_id || '',
+    keywords: seoSettings?.metadata?.keywords || '',
+    robotsMeta: seoSettings?.metadata?.robots_meta?.value || 'index,follow',
   }
+
+  // Override with page-specific SEO if available
+  if (pageSEO) {
+    const pageData: Partial<SEOData> = {
+      title: pageSEO.metadata?.title || baseData.title,
+      description: pageSEO.metadata?.description || baseData.description,
+      ogImage: pageSEO.metadata?.og_image?.imgix_url || baseData.ogImage,
+      keywords: pageSEO.metadata?.keywords || baseData.keywords,
+    }
+    Object.assign(baseData, pageData)
+  }
+
+  // Apply any overrides
+  return { ...baseData, ...overrides }
 }
 
 export function generateMetadata(seoData: SEOData, path: string): Metadata {
-  const canonicalUrl = seoData.canonicalUrl || `${seoData.siteUrl}${path}`
+  const fullUrl = `${seoData.siteUrl}${path}`
   
+  // Optimize OG image if available
+  const ogImageUrl = seoData.ogImage 
+    ? `${seoData.ogImage}?w=1200&h=630&fit=crop&auto=format,compress`
+    : undefined
+
   return {
     title: seoData.title,
     description: seoData.description,
     keywords: seoData.keywords,
-    authors: [{ name: 'Naked Development' }],
-    creator: 'Naked Development',
-    publisher: 'Naked Development',
-    formatDetection: {
-      email: false,
-      address: false,
-      telephone: false,
-    },
-    robots: {
-      index: seoData.robotsMeta?.includes('index') !== false,
-      follow: seoData.robotsMeta?.includes('follow') !== false,
-      googleBot: {
-        index: seoData.robotsMeta?.includes('index') !== false,
-        follow: seoData.robotsMeta?.includes('follow') !== false,
-        'max-video-preview': -1,
-        'max-image-preview': 'large' as const,
-        'max-snippet': -1,
-      },
-    },
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    robots: seoData.robotsMeta,
     openGraph: {
       title: seoData.title,
       description: seoData.description,
-      url: canonicalUrl,
-      siteName: 'Naked Development',
-      images: seoData.ogImage
-        ? [
-            {
-              url: `${seoData.ogImage}?w=1200&h=630&fit=crop&auto=format,compress`,
-              width: 1200,
-              height: 630,
-              alt: seoData.title,
-            },
-          ]
-        : [],
-      locale: 'en_US',
+      url: fullUrl,
+      siteName: seoData.title,
       type: 'website',
+      locale: 'en_US',
+      ...(ogImageUrl && {
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: seoData.title,
+          },
+        ],
+      }),
     },
     twitter: {
       card: 'summary_large_image',
       title: seoData.title,
       description: seoData.description,
-      creator: seoData.twitterHandle,
-      images: seoData.ogImage ? [`${seoData.ogImage}?w=1200&h=630&fit=crop&auto=format,compress`] : [],
+      ...(seoData.twitterHandle && { creator: seoData.twitterHandle }),
+      ...(ogImageUrl && { images: [ogImageUrl] }),
     },
-    ...(seoData.facebookAppId && {
-      facebook: {
-        appId: seoData.facebookAppId,
-      },
-    }),
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/favicon.ico',
+    alternates: {
+      canonical: fullUrl,
+    },
+    other: {
+      ...(seoData.facebookAppId && { 'fb:app_id': seoData.facebookAppId }),
     },
   }
 }
